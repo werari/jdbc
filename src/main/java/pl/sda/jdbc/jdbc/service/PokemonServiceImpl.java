@@ -11,6 +11,7 @@ import pl.sda.jdbc.jdbc.mapper.PokemonMapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -40,17 +41,17 @@ public class PokemonServiceImpl implements PokemonService {
 
 
     @Override
-    public PokemonDto findByName(String name) {
+    public Optional<PokemonDto> findByName(String name) {
         PokemonDomain query;
         try {
             query = this.jdbcTemplate.queryForObject(
-                    "select name from pokemons", new PokemonMapper(), name);
-            return convertPokemonToDto(query);
+                    "select * from pokemons where name=?", new PokemonMapper(), name);
+            return Optional.ofNullable(convertPokemonToDto(query));
 
         } catch (Exception e) {
             log.error("Couldn't find pokemon");
         }
-        return null;
+        return Optional.empty();
 
     }
 
@@ -60,7 +61,7 @@ public class PokemonServiceImpl implements PokemonService {
     public List<PokemonDto> findAllPokemons() {
 
         List<PokemonDomain> pokemonDomainList = this.jdbcTemplate.query(
-                "SELECT idPokemon name, weight, speciesUrl, speciesName FROM pokemons", new PokemonMapper());
+                "SELECT idPokemon, name, weight, speciesUrl, speciesName FROM pokemons", new PokemonMapper());
 
 
         List<PokemonDto> list = new ArrayList<>();

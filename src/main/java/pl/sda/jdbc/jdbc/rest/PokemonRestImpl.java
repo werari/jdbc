@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.sda.jdbc.jdbc.Exception.RestNotFoundException;
 import pl.sda.jdbc.jdbc.Exception.RestPokemonException;
 import pl.sda.jdbc.jdbc.dto.PokemonDto;
 import pl.sda.jdbc.jdbc.service.PokemonService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -53,19 +55,21 @@ public class PokemonRestImpl implements PokemonRestInterface {
 
     @GetMapping("/findById")
     @Override
-    public ResponseEntity<PokemonDto> findById(@RequestParam int id) throws RestPokemonException {
+    public ResponseEntity<PokemonDto> findById(@RequestParam (value = "id") int id) throws RestNotFoundException {
         PokemonDto byId = pokemonService.findById(id);
         if (byId != null) {
             return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body(byId);
         } else {
-            throw new RestPokemonException();
+            throw new RestNotFoundException();
         }
     }
 
     @GetMapping("/findByName")
     @Override
-    public ResponseEntity<PokemonDto> findByName(@RequestParam String name) {
-        PokemonDto byName = pokemonService.findByName(name);
-        return ResponseEntity.status(HttpStatus.OK).body(byName);
+    public ResponseEntity<PokemonDto> findByName(@RequestParam (value = "name") String name) throws RestNotFoundException {
+        return pokemonService.findByName(name)
+                .map(p->ResponseEntity.status(HttpStatus.OK).body(p))
+                .orElseThrow(()-> new RestNotFoundException());
+
     }
 }

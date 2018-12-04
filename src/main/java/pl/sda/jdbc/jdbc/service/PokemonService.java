@@ -4,6 +4,7 @@ import pl.sda.jdbc.jdbc.Domain.PokemonDomain;
 import pl.sda.jdbc.jdbc.dto.PokemonDto;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PokemonService {
     int count();
@@ -16,6 +17,6 @@ public interface PokemonService {
 
     PokemonDto findById(int id);
 
-    PokemonDto findByName(String name);
+    Optional<PokemonDto> findByName(String name);
     PokemonDto convertPokemonToDto(PokemonDomain pok);
 }
