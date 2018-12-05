@@ -12,6 +12,9 @@ import pl.sda.jdbc.jdbc.service.PokemonService;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 @RestController
 @RequestMapping("/api")
 public class PokemonRestImpl implements PokemonRestInterface {
@@ -57,7 +60,9 @@ public class PokemonRestImpl implements PokemonRestInterface {
     @Override
     public ResponseEntity<PokemonDto> findById(@RequestParam (value = "id") int id) throws RestNotFoundException {
         PokemonDto byId = pokemonService.findById(id);
+
         if (byId != null) {
+            byId.add(linkTo(methodOn(PokemonRestImpl.class).count()).withSelfRel());
             return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body(byId);
         } else {
             throw new RestNotFoundException();

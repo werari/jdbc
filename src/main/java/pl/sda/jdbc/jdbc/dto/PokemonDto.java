@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,7 +21,7 @@ import java.util.List;
 @Getter
 @Setter
 
-public class PokemonDto {
+public class PokemonDto extends ResourceSupport {
 
     private String name;
     private String weight;
